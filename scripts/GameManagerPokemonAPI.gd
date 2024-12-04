@@ -3,26 +3,64 @@ extends Node2D
 var http_request: HTTPRequest
 var pokemon_sprites = []
 var api_url = "https://pokeapi.co/api/v2/pokemon/"
-var number_of_pokemon = 12  # Fetch this many Pokémon
 var default_image
-var pokemon_data = []
-var init = false  # Moved init here for proper scope
+var level = Global.level
+var base_cards = 6  # Jumlah kartu dasar untuk level pertama
+var card_scene = preload("res://scenes/card.tscn")  # Path ke Card.tscn
+var request_queue = []  # Antrian URL untuk permintaan
+var fetching = false  # Status apakah permintaan sedang berlangsung
+var sprites_loaded = 0  # Counter for loaded sprites
+var total_pairs = Global.total_pairs
+var selected_cards = []  # To track currently selected cards
+var score = 0  # Player's score
+var time_left = 60  # Time limit for the level in seconds
+var timer
+var unmatched_cards = 0
+var time_bonus = 0
+
 
 func _ready():
+	timer = $LevelTimer
+	timer.connect("timeout", Callable(self, "_on_timer_timeout"))
+
 	default_image = preload("res://sprites/dandelion-flower.png")
 	http_request = HTTPRequest.new()
 	add_child(http_request)
 	http_request.connect("request_completed", Callable(self, "_on_request_completed"))
-	fetch_pokemon_sprites()
-
-func fetch_pokemon_sprites():
+	prepare_next_level()
+	
+func _on_timer_timeout():
+	print("Time's up!")
+	end_level()  # Define logic for ending the level
+	
+func prepare_next_level():
+	timer.start(time_left)
+	total_pairs = base_cards / 2 + (level - 1)
+	Global.total_pairs = total_pairs
+	request_queue.clear()
+	pokemon_sprites.clear()
+	#print('total_pairs : ', total_pairs)
 	randomize()
-	for i in range(number_of_pokemon):
-		var random_pokemon_id = randi() % 898 + 1  # Random Pokémon ID (1-898)
+	for i in range(total_pairs):
+		var random_pokemon_id = randi() % 898 + 1
 		var url = api_url + str(random_pokemon_id)
-		http_request.request(url)
+		request_queue.append(url)
+	
+	sprites_loaded = 0  # Reset sprite counter before starting requests
+	process_next_request()
+
+func process_next_request():
+	if request_queue.size() > 0 and not fetching:
+		fetching = true
+		http_request.request(request_queue.pop_front())
+	else:
+		if request_queue.size() == 0:
+			# Proceed to spawn cards only after all images have been loaded
+			if sprites_loaded == total_pairs:
+				spawn_cards()
 
 func _on_request_completed(result, response_code, headers, body):
+	fetching = false  # Reset fetching status
 	if response_code == 200:
 		var json = JSON.new()
 		var parse_result = json.parse(body.get_string_from_utf8())
@@ -36,46 +74,123 @@ func _on_request_completed(result, response_code, headers, body):
 	else:
 		print("Failed to fetch Pokémon data: ", response_code)
 
+	process_next_request()  # Continue to the next request
+
 func load_sprite(url):
-	# Using an HTTPRequest to load the image
 	var image_request = HTTPRequest.new()
 	add_child(image_request)
 	image_request.request(url)
 	image_request.connect("request_completed", Callable(self, "_on_image_loaded"))
 
 func _on_image_loaded(result, response_code, headers, body):
+	
 	if response_code == 200:
 		var image = Image.new()
 		var err = image.load_png_from_buffer(body)
 		if err == OK:
-			var texture = ImageTexture.new()
-			texture.create_from_image(image)
-			pokemon_sprites.append(texture)
-	else:
-		print("Failed to load sprite image: ", response_code)
+			var texture = ImageTexture.create_from_image(image)
+			#print('textture width : ', texture.get_width())
+			#print('textture height : ', texture.get_height())
+			
+			if texture.get_width() > 0 and texture.get_height() > 0:
+				#print("Image printed successfully")
+				pokemon_sprites.append(texture)
+			else:
+				print("Image not loaded yet")
+		else:
+			print("Failed to load image")
+	sprites_loaded += 1  # Increment sprite load counter
 
-func _shuffle_cards():
-	if pokemon_sprites.size() < number_of_pokemon:
-		print("Sprites are still loading!")
+	# Check if all sprites are loaded before proceeding
+	if sprites_loaded == total_pairs:
+		spawn_cards()  # Proceed to spawn cards after all images are loaded
+
+func spawn_cards():
+	var card_count = base_cards + (level - 1) * 2  # Total cards for this level
+	randomize()
+	var grid_columns = total_pairs  # Number of columns for the card grid
+	print(card_count)
+
+	# Ensure there are enough sprites
+	if pokemon_sprites.size() * 2 < card_count:
+		print("Not enough sprites loaded yet!")
 		return
 
-	var all_remaining_cards = []  # Declared here for correct scope
-	for i in range(1, number_of_pokemon * 2 + 1):
-		all_remaining_cards.append(i)
+	# Duplicate each sprite to create pairs
+	var sprite_pool = []
+	for sprite in pokemon_sprites:
+		sprite_pool.append(sprite)
+		sprite_pool.append(sprite)
 
-	randomize()
-	for i in range(number_of_pokemon):
-		var random_card_1 = randi() % all_remaining_cards.size()
-		var card_1_id = all_remaining_cards[random_card_1]
-		all_remaining_cards.remove_at(random_card_1)
+	# Shuffle the sprite pool for randomness
+	sprite_pool.shuffle()
 
-		var random_card_2 = randi() % all_remaining_cards.size()
-		var card_2_id = all_remaining_cards[random_card_2]
-		all_remaining_cards.remove_at(random_card_2)
+	# Spawn the cards
+	for i in range(card_count):
+		var card_instance = card_scene.instantiate()
+		card_instance.position = Vector2((i % grid_columns) * 150, (i / grid_columns) * 200)  # Adjust card position
+		card_instance.card_face = sprite_pool.pop_back()  # Assign a sprite to the card
+		card_instance.connect("card_flipped", Callable(self, "_on_card_flipped"))
+		get_node("CardArea").add_child(card_instance)
+		unmatched_cards += 1
 
-		# Assign images to cards
-		var texture = pokemon_sprites[i]
-		get_node("Card" + str(card_1_id)).set("card_face", texture)
-		get_node("Card" + str(card_2_id)).set("card_face", texture)
+	print("Cards spawned for level ", level)
 
-	init = true
+func next_level():
+	level += 1
+	Global.level = level
+	# Add time bonus for the new level (reset time)
+	time_left = 60 + time_bonus  # Add time bonus to the base time (60 seconds)
+	timer.start(time_left)
+	clear_cards()
+	prepare_next_level()
+
+func clear_cards():
+	for child in get_children():
+		if child is Node2D and child.has_method("reset_card"):
+			child.queue_free()
+			
+func _on_card_flipped(card):
+	if card in selected_cards:
+		return  # Prevent duplicate flips
+	selected_cards.append(card)
+	if selected_cards.size() == 2:
+		if check_match(selected_cards[0], selected_cards[1]):
+			score += 10  # Increase score for a match
+			for matched_card in selected_cards:
+				matched_card.queue_free()  # Remove matched cards
+			unmatched_cards -= 2
+		else:
+			# Flip back if not a match after a small delay
+			await get_tree().create_timer(1.0).timeout
+			for unmatched_card in selected_cards:
+				unmatched_card.flip_card()
+		selected_cards.clear()
+		
+	if unmatched_cards == 0 : 
+		await get_tree().create_timer(2.0).timeout
+		time_bonus = time_left
+		next_level()
+	
+	
+
+func check_match(card1, card2):
+	return card1.card_face == card2.card_face
+	
+func _process(delta):
+	time_left -= delta
+	$TimerLabel.text = "Time: " + str(round(time_left))
+	update_score_display()
+	if time_left <= 0:
+		_on_timer_timeout()
+		
+func end_level():
+	timer.stop()
+	print("Level Over! Final Score: ", score)# Implement logic for restarting, progressing to the next level, or showing a game-over screen
+
+func update_score_display():
+	$ScoreLabel.text = "Score: " + str(score)
+
+
+func _on_BackToMenuButton_button_down():
+	get_tree().reload_current_scene()
