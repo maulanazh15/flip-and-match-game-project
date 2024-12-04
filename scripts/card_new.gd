@@ -6,7 +6,7 @@ var card_name
 signal card_flipped(card)  # Signal for card flipping
 
 var is_flipped = false
-@export var base_size: Vector2 = Vector2(150, 200)  # Base card size
+@export var base_size: Vector2 = Vector2(130, 180)  # Base card size
 @export var min_size: Vector2 = Vector2(50, 70)  # Minimum card size
 var level = Global.level  # Current game level
 var max_cards_per_row = Global.total_pairs  # Maximum cards per row in the grid
@@ -45,6 +45,7 @@ func adjust_card_size():
 	$CardFace.scale = Vector2(new_size.x / $CardFace.texture.get_size().x, new_size.y / $CardFace.texture.get_size().y)
 
 func flip_card():
+	$CardFlipSound.play()
 	if not is_flipped:
 		$AnimationPlayer.play("flip_face")
 		$CardBack.visible = false  # Hide the back texture

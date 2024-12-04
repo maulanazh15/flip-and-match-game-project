@@ -103,6 +103,15 @@ theme_override_fonts/normal_font = ExtResource("4_1yfgl")
 theme_override_font_sizes/normal_font_size = 28
 text = "Time : 0"
 
+[node name="LoadingScreen" type="RichTextLabel" parent="."]
+offset_left = 222.0
+offset_top = 307.0
+offset_right = 855.0
+offset_bottom = 398.0
+theme_override_fonts/normal_font = ExtResource("4_1yfgl")
+theme_override_font_sizes/normal_font_size = 46
+text = "Loading Cards ......."
+
 [node name="BackToMenuButton" type="Button" parent="."]
 offset_left = 20.0
 offset_top = 900.0
