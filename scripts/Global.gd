@@ -4,6 +4,7 @@ extends Node
 var level = 1  # Default starting level
 var score = 0
 var total_pairs = 0
+var card_mathced = false
 
 func save_game():
 	var save_data = { "level": level, "score" : score }

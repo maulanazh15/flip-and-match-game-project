@@ -13,6 +13,10 @@ func _ready():
 
 
 func _on_StartButton_pressed():
+	if $ClickStartSound.playing == false :
+		$ClickStartSound.play()
+	await get_tree().create_timer(1).timeout
+
 	get_node("StartButton").visible = false
 	get_node("QuitButton").visible = false
 	get_node("GameName").visible = false
@@ -27,6 +31,9 @@ func _on_StartButton_pressed():
 	get_node("BlacKElement").visible = false
 	get_node("PurpleElement").visible = false
 	add_child(gameManagerUnpacked)
+	if $GameBGM.playing == false:
+		$GameBGM.play()
+		$MenuBackSound.stop()
 
 func _on_QuitButton_button_down():
 	get_tree().quit()

@@ -1,13 +1,16 @@
-[gd_scene load_steps=13 format=3 uid="uid://c1cq8qwyb03r3"]
+[gd_scene load_steps=16 format=3 uid="uid://c1cq8qwyb03r3"]
 
-[ext_resource type="Script" path="res://scripts/GameManagerPokemonAPI.gd" id="1_jup54"]
+[ext_resource type="Script" path="res://scripts/GameManagerYugiohAPI.gd" id="1_sbk2b"]
 [ext_resource type="Script" path="res://scripts/Card1.gd" id="2_dlaa8"]
 [ext_resource type="Texture2D" uid="uid://e7j5dn3oa22o" path="res://sprites/dandelion-flower.png" id="3_hdwaa"]
 [ext_resource type="FontFile" uid="uid://cxuft2yrjm7pw" path="res://fonts/Symtext.ttf" id="4_1yfgl"]
 [ext_resource type="Script" path="res://scripts/CardOneName.gd" id="5_cw6w1"]
 [ext_resource type="Script" path="res://scripts/CardTwoName.gd" id="6_4ni8b"]
-[ext_resource type="AudioStream" uid="uid://dq2wp7mltdmi8" path="res://music/JDSherbert - Ultimate UI SFX Pack/Free/Stereo/wav (HD)/JDSherbert - Ultimate UI SFX Pack - Swipe - 2.wav" id="7_a0ni3"]
+[ext_resource type="AudioStream" uid="uid://ccko2bwgr7inp" path="res://music/MatchTrue.MP3" id="7_3pbvb"]
 [ext_resource type="AudioStream" uid="uid://bo5s48umhai7" path="res://music/error-10-206498.mp3" id="8_3tbni"]
+[ext_resource type="Texture2D" uid="uid://bftjniqpcqcxk" path="res://sprites/yugioh-card-back.png" id="9_1dvot"]
+[ext_resource type="Texture2D" uid="uid://duy7a4whucm1j" path="res://sprites/BG_CardView.png" id="9_nr86p"]
+[ext_resource type="AudioStream" uid="uid://b3okkcvm1vqbl" path="res://music/Passionate_Duelist_Yugi_Dual_Mix.mp3" id="11_g6tu3"]
 
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(503.378, 500.964)
@@ -31,7 +34,7 @@ size = Vector2(1396, 761)
 
 [node name="GameManger" type="Node2D"]
 position = Vector2(90, 0)
-script = ExtResource("1_jup54")
+script = ExtResource("1_sbk2b")
 
 [node name="Card16" type="Area2D" parent="."]
 visible = false
@@ -104,10 +107,10 @@ theme_override_font_sizes/normal_font_size = 28
 text = "Time : 0"
 
 [node name="LoadingScreen" type="RichTextLabel" parent="."]
-offset_left = 222.0
-offset_top = 307.0
-offset_right = 855.0
-offset_bottom = 398.0
+offset_left = 421.0
+offset_top = 268.0
+offset_right = 1054.0
+offset_bottom = 359.0
 theme_override_fonts/normal_font = ExtResource("4_1yfgl")
 theme_override_font_sizes/normal_font_size = 46
 text = "Loading Cards ......."
@@ -123,10 +126,10 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_lspja")
 theme_override_styles/normal = SubResource("StyleBoxFlat_cb42s")
 text = "Back to Menu"
 
-[node name="CardFlipSound" type="AudioStreamPlayer2D" parent="."]
+[node name="MatchSound" type="AudioStreamPlayer2D" parent="."]
 position = Vector2(183, 0)
-stream = ExtResource("7_a0ni3")
-volume_db = 5.943
+stream = ExtResource("7_3pbvb")
+volume_db = 15.0
 
 [node name="WrongPairSound" type="AudioStreamPlayer2D" parent="."]
 position = Vector2(87, 2)
@@ -134,12 +137,28 @@ stream = ExtResource("8_3tbni")
 volume_db = 9.869
 
 [node name="CardArea" type="Area2D" parent="."]
-position = Vector2(348, 189)
+position = Vector2(401, 76)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CardArea"]
 position = Vector2(757, 76)
 shape = SubResource("RectangleShape2D_jq4an")
 
 [node name="LevelTimer" type="Timer" parent="."]
+
+[node name="CardAttribute" type="TextureRect" parent="."]
+offset_left = -107.0
+offset_top = 1.0
+offset_right = 363.0
+offset_bottom = 504.0
+texture = ExtResource("9_nr86p")
+expand_mode = 1
+
+[node name="CardView" type="Sprite2D" parent="CardAttribute"]
+position = Vector2(236, 251)
+scale = Vector2(1.09377, 1.12305)
+texture = ExtResource("9_1dvot")
+
+[node name="GameBGM" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("11_g6tu3")
 
 [connection signal="button_down" from="BackToMenuButton" to="." method="_on_BackToMenuButton_button_down"]

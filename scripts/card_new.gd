@@ -6,8 +6,8 @@ var card_name
 signal card_flipped(card)  # Signal for card flipping
 
 var is_flipped = false
-@export var base_size: Vector2 = Vector2(130, 180)  # Base card size
-@export var min_size: Vector2 = Vector2(50, 70)  # Minimum card size
+@export var base_size: Vector2 = Vector2(300, 450)  # Base card size
+@export var min_size: Vector2 = Vector2(160, 180)  # Minimum card size
 var level = Global.level  # Current game level
 var max_cards_per_row = Global.total_pairs  # Maximum cards per row in the grid
 
@@ -16,7 +16,7 @@ func _ready():
 	adjust_card_size()
 	
 	# Set textures for CardBack and CardFace
-	$CardBack.texture = preload("res://sprites/card-exchange.png")
+	$CardBack.texture = preload("res://sprites/yugioh-card-back.png")
 	$CardFace.texture = card_face if card_face else preload("res://sprites/skull-crossed-bones.png")
 	
 	# Hide the card face initially
@@ -58,6 +58,6 @@ func flip_card():
 		is_flipped = false
 
 func _on_card_clicked(event):
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed() and not Global.card_mathced:
 		emit_signal("card_flipped", self)  # Emit the signal
 		flip_card()  # Perform the flip

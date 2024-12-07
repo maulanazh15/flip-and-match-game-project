@@ -136,7 +136,8 @@ func spawn_cards():
 		var card_instance = card_scene.instantiate()
 		var column = i % grid_columns
 		var row = i / grid_columns
-		card_instance.position = Vector2(column * 150, row * 200)  # Adjust card position
+		card_instance.position = Vector2(column * 130, row * 200)  # Adjust card position
+		card_instance.position = Vector2(column * 130, row * 200)  # Adjust card position
 		card_instance.card_face = sprite_pool.pop_back()  # Assign a sprite to the card
 		card_instance.connect("card_flipped", Callable(self, "_on_card_flipped"))
 		get_node("CardArea").add_child(card_instance)

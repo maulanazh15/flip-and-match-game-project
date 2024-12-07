@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dbt4lpp6g568c"]
+[gd_scene load_steps=20 format=3 uid="uid://dbt4lpp6g568c"]
 
 [ext_resource type="Script" path="res://scripts/MenuScene.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://h4je4bj5gaqj" path="res://sprites/BackgroundBlue.png" id="2"]
@@ -11,7 +11,9 @@
 [ext_resource type="Texture2D" uid="uid://em2mxi0jdeei" path="res://sprites/BackgroundDarkGreen.png" id="9"]
 [ext_resource type="Texture2D" uid="uid://blyr0tj0gh02m" path="res://sprites/BackgroundBlack.png" id="10"]
 [ext_resource type="Texture2D" uid="uid://camrj1rpsj8mm" path="res://sprites/BackgroundPurple.png" id="11"]
-[ext_resource type="AudioStream" uid="uid://jkoui02mhkwx" path="res://music/quirky-fun-comedy-250869.mp3" id="12_kq2fc"]
+[ext_resource type="AudioStream" uid="uid://b5iwk3711u2ib" path="res://music/Yugioh_GX-_Judai_s_Theme.mp3" id="12_0vysp"]
+[ext_resource type="AudioStream" uid="uid://b3okkcvm1vqbl" path="res://music/Passionate_Duelist_Yugi_Dual_Mix.mp3" id="13_c6h43"]
+[ext_resource type="AudioStream" uid="uid://7edblmr75p72" path="res://music/StartLevel.MP3" id="13_op0hs"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g3tmo"]
 bg_color = Color(0.196078, 0.196078, 0.196078, 1)
@@ -56,15 +58,14 @@ centered = false
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 200.0
-offset_top = 80.0
-offset_right = 1880.0
-offset_bottom = 344.0
-grow_horizontal = 2
+offset_left = 459.0
+offset_top = 42.0
+offset_right = 2139.0
+offset_bottom = 306.0
 grow_vertical = 2
 theme_override_fonts/normal_font = ExtResource("3")
 theme_override_font_sizes/normal_font_size = 180
-text = "Memory Game"
+text = "MATCH UP!"
 fit_content = true
 scroll_active = false
 
@@ -98,13 +99,13 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_qi1r8")
 text = "Start"
 
 [node name="Credits" type="RichTextLabel" parent="."]
-offset_left = 720.0
-offset_top = 900.0
-offset_right = 1200.0
-offset_bottom = 1060.0
+offset_left = 659.0
+offset_top = 862.0
+offset_right = 1323.0
+offset_bottom = 1022.0
 theme_override_fonts/normal_font = ExtResource("3")
 theme_override_font_sizes/normal_font_size = 30
-text = "Programming: Tzoop Icons: Game-icons.net Font: Symtext"
+text = "Pay attention to the card designs; even small details can help you remember!"
 scroll_active = false
 
 [node name="ClickColors" type="RichTextLabel" parent="."]
@@ -222,7 +223,16 @@ scale = Vector2(2, 2)
 texture = ExtResource("11")
 
 [node name="MenuBackSound" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("12_kq2fc")
+stream = ExtResource("12_0vysp")
+volume_db = 9.905
+parameters/looping = true
+
+[node name="ClickStartSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("13_op0hs")
+volume_db = 9.905
+
+[node name="GameBGM" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("13_c6h43")
 volume_db = 9.905
 parameters/looping = true
 
