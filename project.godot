@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="MemoryGame"
+config/name="MatchUp"
 run/main_scene="res://scenes/MenuScene.tscn"
 config/features=PackedStringArray("4.3")
 config/icon="res://sprites/card-exchange.png"

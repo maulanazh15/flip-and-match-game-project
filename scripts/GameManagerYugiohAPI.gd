@@ -18,8 +18,7 @@ var time_left = 60  # Time limit for the level in seconds
 var timer
 var unmatched_cards = 0
 var time_bonus = 0
-var max_grid_col = 18
-var max_grid_row = 5
+var max_grid_col = Global.max_grid_col
 var card_spawned = false
 
 
@@ -54,25 +53,14 @@ func prepare_next_level():
 			random_index = randi() % available_cards.size()
 		selected_indices.append(random_index)
 	
-	print("success first loop")
 	for index in selected_indices : 
 		var card_data = available_cards[index]
 		var sprite_url = card_data["card_images"][0]["image_url_small"]
-		print(sprite_url)
 		load_sprite(sprite_url)
 	
 	sprites_loaded = 0  # Reset sprite counter before starting requests
-	#process_next_request()
 
-#func process_next_request():
-	#if request_queue.size() > 0 and not fetching:
-		#fetching = true
-		#http_request.request(request_queue.pop_front())
-	#else:
-		#if request_queue.size() == 0:
-			## Proceed to spawn cards only after all images have been loaded
-			#if sprites_loaded == total_pairs:
-				#spawn_cards()
+
 func fetch_card_data():
 	$LoadingScreen.text = "Fetching card data..."
 	http_request.request(api_url)
@@ -91,7 +79,6 @@ func _on_request_completed(result, response_code, headers, body):
 	else:
 		print("Failed to fetch Pokémon data: ", response_code)
 
-	#process_next_request()  # Continue to the next request
 
 func load_sprite(url):
 	var image_request = HTTPRequest.new()
@@ -105,9 +92,6 @@ func _on_image_loaded(result, response_code, headers, body):
 		var err = image.load_jpg_from_buffer(body)
 		if err == OK:
 			var texture = ImageTexture.create_from_image(image)
-			print('textture width : ', texture.get_width())
-			print('textture height : ', texture.get_height())
-			
 			if texture.get_width() > 0 and texture.get_height() > 0:
 				#print("Image printed successfully")
 				pokemon_sprites.append(texture)
@@ -127,9 +111,7 @@ func spawn_cards():
 	#$LoadingScreen.visible = true
 	randomize()
 	var grid_columns = min(total_pairs, max_grid_col)
-	var grid_rows = min(ceil(card_count / float(grid_columns)), max_grid_row) # Number of columns for the card grid
-	print(card_count)
-
+	var grid_rows = ceil(card_count / float(grid_columns))
 	# Ensure there are enough sprites
 	if pokemon_sprites.size() * 2 < card_count:
 		print("Not enough sprites loaded yet!")
@@ -143,13 +125,21 @@ func spawn_cards():
 
 	# Shuffle the sprite pool for randomness
 	sprite_pool.shuffle()
-
+	var max_x_threshold = 1440  # Adjust based on your scene's dimensions
+	var max_y_threshold = 835
+	# Adjust multipliers based on the total card count
+	var x_multiplier = lerp(300, 150, clamp(float(card_count) / (grid_columns * grid_rows), 0.0, 1.0))
+	var y_multiplier = lerp(400, 200, clamp(float(card_count) / (grid_columns * grid_rows), 0.0, 1.0))
 	# Spawn the cards
 	for i in range(card_count):
 		var card_instance = card_scene.instantiate()
 		var column = i % grid_columns
-		var row = i / grid_columns
-		card_instance.position = Vector2(column * 280, row * 350)  # Adjust card position
+		var row = int(i / grid_columns)
+		
+		var x_pos = min(column * x_multiplier, max_x_threshold)
+		var y_pos = min(row * y_multiplier, max_y_threshold)
+		
+		card_instance.position = Vector2(x_pos, y_pos)  # Adjust card position
 		card_instance.card_face = sprite_pool.pop_back()  # Assign a sprite to the card
 		card_instance.connect("card_flipped", Callable(self, "_on_card_flipped"))
 		get_node("CardArea").add_child(card_instance)
@@ -174,18 +164,15 @@ func clear_cards():
 		if child is Node2D and child.has_method("reset_card"):
 			child.queue_free()
 
-var allow_input = true
-			
 func _on_card_flipped(card):
 	$CardAttribute/CardView.texture = card.card_face
 	if card in selected_cards :
 	#if card in selected_cards or not allow_input or not card_spawned:
 		return  # Prevent duplicate flips
-	allow_input = false
 	selected_cards.append(card)
 	if selected_cards.size() == 2:
+		Global.check_mathced = true
 		if check_match(selected_cards[0], selected_cards[1]):
-			Global.card_mathced = true
 			score += 10  # Increase score for a match
 			$CheckBox.text = "="
 			$MatchSound.play()
@@ -204,8 +191,7 @@ func _on_card_flipped(card):
 		
 		$CardAttribute/CardView.texture = load("res://sprites/yugioh-card-back.png")
 		selected_cards.clear()
-		allow_input = true
-		Global.card_mathced = false
+		Global.check_mathced = false
 		
 	
 	$CheckBox.text = "?"

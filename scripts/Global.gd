@@ -4,8 +4,9 @@ extends Node
 var level = 1  # Default starting level
 var score = 0
 var total_pairs = 0
-var card_mathced = false
-
+var check_mathced = false
+var max_grid_col = 5
+var max_grid_row = 4
 func save_game():
 	var save_data = { "level": level, "score" : score }
 	var file = FileAccess.open("user://save_game.json", FileAccess.WRITE)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://duddphxmj58bg"]
+[gd_scene load_steps=11 format=3 uid="uid://duddphxmj58bg"]
 
 [ext_resource type="Script" path="res://scripts/GameManager.gd" id="1_26trh"]
 [ext_resource type="Script" path="res://scripts/Card.gd" id="2"]
@@ -6,7 +6,6 @@
 [ext_resource type="Script" path="res://scripts/CardOneName.gd" id="5"]
 [ext_resource type="Script" path="res://scripts/CardTwoName.gd" id="6"]
 [ext_resource type="FontFile" uid="uid://cxuft2yrjm7pw" path="res://fonts/Symtext.ttf" id="6_qtkwh"]
-[ext_resource type="AudioStream" uid="uid://dq2wp7mltdmi8" path="res://music/JDSherbert - Ultimate UI SFX Pack/Free/Stereo/wav (HD)/JDSherbert - Ultimate UI SFX Pack - Swipe - 2.wav" id="7_7xsot"]
 [ext_resource type="AudioStream" uid="uid://bo5s48umhai7" path="res://music/error-10-206498.mp3" id="8_h5671"]
 
 [sub_resource type="RectangleShape2D" id="1"]
@@ -368,7 +367,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_cb42s")
 text = "Back to Menu"
 
 [node name="CardFlipSound" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("7_7xsot")
 volume_db = 5.943
 
 [node name="WrongPairSound" type="AudioStreamPlayer2D" parent="."]

@@ -30,7 +30,7 @@ corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jq4an"]
-size = Vector2(1396, 761)
+size = Vector2(1437.5, 835.75)
 
 [node name="GameManger" type="Node2D"]
 position = Vector2(90, 0)
@@ -137,10 +137,10 @@ stream = ExtResource("8_3tbni")
 volume_db = 9.869
 
 [node name="CardArea" type="Area2D" parent="."]
-position = Vector2(401, 76)
+position = Vector2(387, -3)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CardArea"]
-position = Vector2(757, 76)
+position = Vector2(693.75, 433.875)
 shape = SubResource("RectangleShape2D_jq4an")
 
 [node name="LevelTimer" type="Timer" parent="."]
