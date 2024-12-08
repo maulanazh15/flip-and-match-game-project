@@ -13,8 +13,11 @@ var max_cards_per_row = Global.total_pairs # Maximum cards per row in the grid
 
 func _ready():
 	# Adjust card size based on level
-	adjust_card_size()
+	var card_count = Global.total_cards # Total cards for this level
+	var grid_columns = min(Global.total_pairs, Global.max_grid_col)
+	var grid_rows = ceil(card_count / float(grid_columns))
 	
+	adjust_card_size(card_count, grid_columns, grid_rows)
 	# Set textures for CardBack and CardFace
 	$CardBack.texture = preload("res://sprites/yugioh-card-back.png")
 	$CardFace.texture = card_face if card_face else preload("res://sprites/skull-crossed-bones.png")
@@ -47,32 +50,43 @@ func _ready():
 	## Scale CardBack and CardFace to match the new size
 	#$CardBack.scale = Vector2(new_size.x / $CardBack.texture.get_size().x, new_size.y / $CardBack.texture.get_size().y)
 	#$CardFace.scale = Vector2(new_size.x / $CardFace.texture.get_size().x, new_size.y / $CardFace.texture.get_size().y)
-func adjust_card_size():
-	# Define threshold area dimensions (e.g., max playable width and height)
+
+func adjust_card_size(card_count: int, grid_columns: int, grid_rows: int):
+	# Define threshold area dimensions
 	var max_playable_width = 1440  # Maximum width of the area
 	var max_playable_height = 835  # Maximum height of the area
-	# Calculate grid dimensions based on current level or setup
-	var total_cards = max_cards_per_row * (level + 1)
-	#var total_cards = max_cards_per_row * Global.grid_rows  # Adjust for total cards and grid rows/columns
-	var grid_width = max_cards_per_row
-	var grid_height = ceil(total_cards / float(max_cards_per_row))
-	
-	# Calculate available size for each card based on the thresholds	
-	var available_width = min(get_viewport_rect().size.x, max_playable_width) / grid_width
-	var available_height = min(get_viewport_rect().size.y, max_playable_height) / grid_height
-	
-	# Determine new card size, ensuring it remains within defined constraints
+
+	# Calculate dynamic gaps based on spawn_card logic
+	var min_gap_x = 50  # Minimum horizontal gap
+	var min_gap_y = 50  # Minimum vertical gap
+	var card_width = base_size.x
+	var card_height = base_size.y
+
+	# Adjust gaps to fit the available space
+	var gap_x = max((max_playable_width - (grid_columns * card_width)) / (grid_columns + 1), min_gap_x)
+	var gap_y = max((max_playable_height - (grid_rows * card_height)) / (grid_rows + 1), min_gap_y)
+
+	# Calculate available space for each card
+	var available_width = (max_playable_width - (gap_x * (grid_columns + 1))) / grid_columns
+	var available_height = (max_playable_height - (gap_y * (grid_rows + 1))) / grid_rows
+
+	# Determine new card size, ensuring height > width
 	var new_width = min(base_size.x, max(min_size.x, available_width))
-	var new_height = min(base_size.y, max(min_size.y, available_height))
+	var new_height = max(new_width * 1.2, min(base_size.y, max(min_size.y, available_height)))  # Ensure height is 20% greater
+
+	# Apply scaling to card elements
 	var new_size = Vector2(new_width, new_height)
-	# Update card scales for CardBack and CardFace
 	$CardBack.scale = Vector2(
 		new_size.x / $CardBack.texture.get_size().x,
-		new_size.y / $CardBack.texture.get_size().y)
+		new_size.y / $CardBack.texture.get_size().y
+	)
 	$CardFace.scale = Vector2(
 		new_size.x / $CardFace.texture.get_size().x,
-		new_size.y / $CardFace.texture.get_size().y)
+		new_size.y / $CardFace.texture.get_size().y
+	)
+
 	print("Card size adjusted: ", new_size)
+
 	
 func flip_card():
 	$CardFlipSound.play()

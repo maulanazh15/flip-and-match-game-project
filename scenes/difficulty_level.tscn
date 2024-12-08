@@ -1,0 +1,77 @@
+[gd_scene load_steps=5 format=3 uid="uid://b1tlsg6a6v2cr"]
+
+[ext_resource type="FontFile" uid="uid://cxuft2yrjm7pw" path="res://fonts/Symtext.ttf" id="1_7hurq"]
+[ext_resource type="Script" path="res://scripts/difficulty_level.gd" id="1_aqo2d"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_adwiw"]
+bg_color = Color(0.196078, 0.196078, 0.196078, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6jqkl"]
+bg_color = Color(0.101961, 0.101961, 0.101961, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="DifficultyLevel" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_aqo2d")
+
+[node name="EasyBtn" type="Button" parent="."]
+offset_left = 633.0
+offset_top = 61.0
+offset_right = 1253.0
+offset_bottom = 301.0
+theme_override_fonts/font = ExtResource("1_7hurq")
+theme_override_font_sizes/font_size = 140
+theme_override_styles/hover = SubResource("StyleBoxFlat_adwiw")
+theme_override_styles/normal = SubResource("StyleBoxFlat_6jqkl")
+text = "EASY"
+
+[node name="BackBtn" type="Button" parent="."]
+offset_left = 50.0
+offset_top = 30.0
+offset_right = 371.0
+offset_bottom = 141.0
+theme_override_fonts/font = ExtResource("1_7hurq")
+theme_override_font_sizes/font_size = 60
+theme_override_styles/hover = SubResource("StyleBoxFlat_adwiw")
+theme_override_styles/normal = SubResource("StyleBoxFlat_6jqkl")
+text = " <- back "
+
+[node name="NormalBtn" type="Button" parent="."]
+offset_left = 559.0
+offset_top = 411.0
+offset_right = 1348.0
+offset_bottom = 649.0
+theme_override_fonts/font = ExtResource("1_7hurq")
+theme_override_font_sizes/font_size = 140
+theme_override_styles/hover = SubResource("StyleBoxFlat_adwiw")
+theme_override_styles/normal = SubResource("StyleBoxFlat_6jqkl")
+text = "NORMAL"
+
+[node name="HardBtn" type="Button" parent="."]
+offset_left = 647.0
+offset_top = 755.0
+offset_right = 1267.0
+offset_bottom = 995.0
+theme_override_fonts/font = ExtResource("1_7hurq")
+theme_override_font_sizes/font_size = 140
+theme_override_styles/hover = SubResource("StyleBoxFlat_adwiw")
+theme_override_styles/normal = SubResource("StyleBoxFlat_6jqkl")
+text = "HARD"
+
+[connection signal="pressed" from="EasyBtn" to="." method="_on_easy_btn_pressed"]
+[connection signal="pressed" from="BackBtn" to="." method="_on_back_btn_pressed"]
+[connection signal="pressed" from="NormalBtn" to="." method="_on_normal_btn_pressed"]
+[connection signal="pressed" from="HardBtn" to="." method="_on_hard_btn_pressed"]

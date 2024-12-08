@@ -14,11 +14,17 @@ var sprites_loaded = 0  # Counter for loaded sprites
 var total_pairs = Global.total_pairs
 var selected_cards = []  # To track currently selected cards
 var score = 0  # Player's score
-var time_left = 60  # Time limit for the level in seconds
+var time_left = Global.difficulty_levels[Global.difficulty]["time_left"]  # Time limit for the level in seconds
+var bonus_time = Global.difficulty_levels[Global.difficulty]["bonus_time"]
+var penalty_time = Global.difficulty_levels[Global.difficulty]["penalty_time"]
+var flips_remaining = Global.difficulty_levels[Global.difficulty]["flip_limit"]
+var bonus_flip = Global.difficulty_levels[Global.difficulty]["bonus_flip"]
+var time_bonus = 0
 var timer
 var unmatched_cards = 0
-var time_bonus = 0
 var max_grid_col = Global.max_grid_col
+var max_grid_row = Global.max_grid_row
+var max_allowed_cards = max_grid_col * max_grid_row
 var card_spawned = false
 
 
@@ -32,6 +38,7 @@ func _ready():
 	add_child(http_request)
 	http_request.connect("request_completed", Callable(self, "_on_request_completed"))
 	#prepare_next_level()
+	$Difficulty.text = Global.difficulty
 	fetch_card_data()
 	
 func _on_timer_timeout():
@@ -40,7 +47,8 @@ func _on_timer_timeout():
 	
 func prepare_next_level():
 	$LoadingScreen.text = "LOADING CARDS ..."
-	total_pairs = base_cards / 2 + (level - 1)
+	var max_allowed_pairs = max_allowed_cards / 2
+	total_pairs = min(max_allowed_pairs, base_cards / 2 + (level - 1))
 	Global.total_pairs = total_pairs
 	request_queue.clear()
 	pokemon_sprites.clear()
@@ -107,11 +115,16 @@ func _on_image_loaded(result, response_code, headers, body):
 
 func spawn_cards():
 	card_spawned = false
-	var card_count = base_cards + (level - 1) * 2  # Total cards for this level
-	#$LoadingScreen.visible = true
+	
+	# Calculate maximum cards allowed by grid
+	var max_total_cards = max_allowed_cards
+	var card_count = min(base_cards + (level - 1) * 2, max_total_cards)  # Ensure cards don't exceed grid capacity
+	Global.total_cards = card_count
+	
 	randomize()
 	var grid_columns = min(total_pairs, max_grid_col)
 	var grid_rows = ceil(card_count / float(grid_columns))
+	
 	# Ensure there are enough sprites
 	if pokemon_sprites.size() * 2 < card_count:
 		print("Not enough sprites loaded yet!")
@@ -125,37 +138,50 @@ func spawn_cards():
 
 	# Shuffle the sprite pool for randomness
 	sprite_pool.shuffle()
-	var max_x_threshold = 1440  # Adjust based on your scene's dimensions
-	var max_y_threshold = 835
-	# Adjust multipliers based on the total card count
-	var x_multiplier = lerp(300, 150, clamp(float(card_count) / (grid_columns * grid_rows), 0.0, 1.0))
-	var y_multiplier = lerp(400, 200, clamp(float(card_count) / (grid_columns * grid_rows), 0.0, 1.0))
-	# Spawn the cards
+
+	# Scene dimensions and gaps
+	var scene_width = 1440  # Adjust based on your viewport width
+	var scene_height = 835  # Adjust based on your viewport height
+
+	# Calculate dynamic gaps
+	var min_gap_x = 50  # Minimum horizontal gap
+	var min_gap_y = 50  # Minimum vertical gap
+	var card_width = 160  # Estimated width of a card
+	var card_height = 180  # Estimated height of a card
+
+	# Dynamic horizontal and vertical gaps
+	var gap_x = max((scene_width - (grid_columns * card_width)) / (grid_columns + 1), min_gap_x)
+	var gap_y = max((scene_height - (grid_rows * card_height)) / (grid_rows + 1), min_gap_y)
+
+	# Spawn the cards with dynamic gaps
 	for i in range(card_count):
 		var card_instance = card_scene.instantiate()
 		var column = i % grid_columns
 		var row = int(i / grid_columns)
 		
-		var x_pos = min(column * x_multiplier, max_x_threshold)
-		var y_pos = min(row * y_multiplier, max_y_threshold)
+		# Position with dynamic gaps
+		var x_pos = gap_x + column * (card_width + gap_x)
+		var y_pos = gap_y + row * (card_height + gap_y)
 		
-		card_instance.position = Vector2(x_pos, y_pos)  # Adjust card position
+		card_instance.position = Vector2(x_pos, y_pos)
 		card_instance.card_face = sprite_pool.pop_back()  # Assign a sprite to the card
 		card_instance.connect("card_flipped", Callable(self, "_on_card_flipped"))
 		get_node("CardArea").add_child(card_instance)
 		unmatched_cards += 1
-		
+
 	card_spawned = true
 	timer.set_paused(false)
 	timer.start(time_left)
 	$LoadingScreen.text = ""
 	print("Cards spawned for level ", level)
 
+
 func next_level():
 	level += 1
 	Global.level = level
 	# Add time bonus for the new level (reset time)
-	time_left = 60 + time_bonus  # Add time bonus to the base time (60 seconds)
+	time_bonus = time_left + bonus_time  # Add time bonus to the base time (60 seconds)
+	time_left = time_bonus
 	clear_cards()
 	prepare_next_level()
 
@@ -169,6 +195,12 @@ func _on_card_flipped(card):
 	if card in selected_cards :
 	#if card in selected_cards or not allow_input or not card_spawned:
 		return  # Prevent duplicate flips
+		
+	if flips_remaining <= 0:
+		print("No more flips allowed!")
+		end_level()
+		return
+	flips_remaining -= 1  # Decrement flip count
 	selected_cards.append(card)
 	if selected_cards.size() == 2:
 		Global.check_mathced = true
@@ -180,11 +212,12 @@ func _on_card_flipped(card):
 			for matched_card in selected_cards:
 				matched_card.queue_free()  # Remove matched cards
 			unmatched_cards -= 2
+			flips_remaining += bonus_flip
 		else:
 			$CheckBox.text = "!="
 			# Flip back if not a match after a small delay
 			$WrongPairSound.play()
-			time_left -= 5
+			time_left -= penalty_time
 			await get_tree().create_timer(1.0).timeout
 			for unmatched_card in selected_cards:
 				unmatched_card.flip_card()
@@ -198,7 +231,6 @@ func _on_card_flipped(card):
 	if unmatched_cards == 0 : 
 		timer.set_paused(true)
 		await get_tree().create_timer(2.0).timeout
-		time_bonus = time_left
 		next_level()
 	
 	
@@ -210,6 +242,7 @@ func _process(delta):
 	if card_spawned and not timer.is_paused():
 		time_left -= delta
 		$TimerLabel.text = "Time: " + str(round(time_left)) + " s"
+		$FlipRemaining.text = "Flip Remainings : " +str(flips_remaining)
 		if time_left <= 0:
 			_on_timer_timeout()
 	update_score_display()
@@ -218,10 +251,11 @@ func _process(delta):
 func end_level():
 	print("Level Over! Final Score: ", score)# Implement logic for restarting, progressing to the next level, or showing a game-over screen
 	timer.stop()
-	level = 1
-	score = 0
-	Global.level = level
-	Global.score = score 
+	Global.level = 1
+	Global.score = 0
+	Global.check_mathced = false
+	Global.total_cards = 0
+	Global.total_pairs = 0 
 	get_tree().reload_current_scene()
 
 func update_score_display():

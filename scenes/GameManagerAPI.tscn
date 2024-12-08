@@ -1,7 +1,6 @@
 [gd_scene load_steps=16 format=3 uid="uid://c1cq8qwyb03r3"]
 
 [ext_resource type="Script" path="res://scripts/GameManagerYugiohAPI.gd" id="1_sbk2b"]
-[ext_resource type="Script" path="res://scripts/Card1.gd" id="2_dlaa8"]
 [ext_resource type="Texture2D" uid="uid://e7j5dn3oa22o" path="res://sprites/dandelion-flower.png" id="3_hdwaa"]
 [ext_resource type="FontFile" uid="uid://cxuft2yrjm7pw" path="res://fonts/Symtext.ttf" id="4_1yfgl"]
 [ext_resource type="Script" path="res://scripts/CardOneName.gd" id="5_cw6w1"]
@@ -11,6 +10,48 @@
 [ext_resource type="Texture2D" uid="uid://bftjniqpcqcxk" path="res://sprites/yugioh-card-back.png" id="9_1dvot"]
 [ext_resource type="Texture2D" uid="uid://duy7a4whucm1j" path="res://sprites/BG_CardView.png" id="9_nr86p"]
 [ext_resource type="AudioStream" uid="uid://b3okkcvm1vqbl" path="res://music/Passionate_Duelist_Yugi_Dual_Mix.mp3" id="11_g6tu3"]
+
+[sub_resource type="GDScript" id="GDScript_r43cf"]
+script/source = "extends Area2D
+
+var card_name
+@export var card_face: Texture
+var card_back
+var click_enabled
+var flipsound
+
+func _ready():
+	click_enabled = true
+	card_name = \"Empty\"
+	card_face = preload(\"res://sprites/dandelion-flower.png\")
+	card_back = preload(\"res://sprites/dandelion-flower.png\")
+	flipsound = $CardFlipSound
+	get_node(\"Sprite\").texture = card_back
+	pass
+
+func _input_event(_viewport, event, _shape_idx):
+	if event is InputEventMouseButton \\
+	and event.button_index == MOUSE_BUTTON_LEFT \\
+	and event.is_pressed():
+		self.on_click()
+
+func on_click():
+	flipsound.play()
+	if click_enabled:
+		if get_parent().last_try_was_pair:
+			get_parent().last_try_was_pair = false
+			get_parent()._reset_card_name_strings_and_check_box()
+		click_enabled = false
+		get_node(\"Sprite\").texture = card_face
+		if (get_parent().get_node(\"CardOneName\").text == \"Card 1\"):
+			get_parent().get_node(\"CardOneName\").text = card_name
+			get_parent().card_one_checked_if_pairing = name
+		elif (get_parent().get_node(\"CardOneName\").text != \"Card 1\"):
+			if (get_parent().get_node(\"CardTwoName\").text == \"Card 2\"):
+				get_parent().get_node(\"CardTwoName\").text = card_name
+				get_parent().card_two_checked_if_pairing = name
+				get_parent()._check_if_pair()
+"
 
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(503.378, 500.964)
@@ -41,7 +82,7 @@ visible = false
 position = Vector2(293, 131)
 scale = Vector2(1e-05, 1e-05)
 gravity = 98.0
-script = ExtResource("2_dlaa8")
+script = SubResource("GDScript_r43cf")
 
 [node name="Sprite" type="Sprite2D" parent="Card16"]
 scale = Vector2(37109.6, 34668.2)
@@ -79,32 +120,50 @@ theme_override_fonts/normal_font = ExtResource("4_1yfgl")
 theme_override_font_sizes/normal_font_size = 60
 text = "?"
 
+[node name="Difficulty" type="RichTextLabel" parent="."]
+offset_left = 1000.0
+offset_top = 968.0
+offset_right = 1768.0
+offset_bottom = 1068.0
+theme_override_fonts/normal_font = ExtResource("4_1yfgl")
+theme_override_font_sizes/normal_font_size = 60
+text = "Difficulty : "
+
 [node name="NumberOfMatches" type="RichTextLabel" parent="."]
 offset_left = 320.0
-offset_top = 1000.0
-offset_right = 920.0
-offset_bottom = 1060.0
+offset_top = 981.0
+offset_right = 842.0
+offset_bottom = 1158.0
 theme_override_fonts/normal_font = ExtResource("4_1yfgl")
-theme_override_font_sizes/normal_font_size = 28
+theme_override_font_sizes/normal_font_size = 60
 text = "Number of Matches: 0"
 
 [node name="ScoreLabel" type="RichTextLabel" parent="."]
-offset_left = 18.0
-offset_top = 715.0
-offset_right = 618.0
-offset_bottom = 775.0
+offset_left = -32.0
+offset_top = 573.0
+offset_right = 568.0
+offset_bottom = 633.0
 theme_override_fonts/normal_font = ExtResource("4_1yfgl")
 theme_override_font_sizes/normal_font_size = 28
 text = "Score : 0"
 
 [node name="TimerLabel" type="RichTextLabel" parent="."]
-offset_left = 22.0
-offset_top = 771.0
-offset_right = 622.0
-offset_bottom = 831.0
+offset_left = -36.0
+offset_top = 635.0
+offset_right = 564.0
+offset_bottom = 695.0
 theme_override_fonts/normal_font = ExtResource("4_1yfgl")
 theme_override_font_sizes/normal_font_size = 28
-text = "Time : 0"
+text = "Time Left : 0"
+
+[node name="FlipRemaining" type="RichTextLabel" parent="."]
+offset_left = -30.0
+offset_top = 699.0
+offset_right = 570.0
+offset_bottom = 759.0
+theme_override_fonts/normal_font = ExtResource("4_1yfgl")
+theme_override_font_sizes/normal_font_size = 28
+text = "Flip Remaining : 0"
 
 [node name="LoadingScreen" type="RichTextLabel" parent="."]
 offset_left = 421.0
@@ -137,10 +196,10 @@ stream = ExtResource("8_3tbni")
 volume_db = 9.869
 
 [node name="CardArea" type="Area2D" parent="."]
-position = Vector2(387, -3)
+position = Vector2(283, -5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CardArea"]
-position = Vector2(693.75, 433.875)
+position = Vector2(692, 351)
 shape = SubResource("RectangleShape2D_jq4an")
 
 [node name="LevelTimer" type="Timer" parent="."]

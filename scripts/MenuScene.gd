@@ -2,11 +2,14 @@ extends Node2D
 
 var gameManagerPacked 
 var gameManagerUnpacked
+var	difficultyManager = preload("res://scenes/difficulty_level.tscn") 
+
 
 func _ready():
 	#gameManagerPacked = preload("res://scenes/GameManager.tscn")
 	gameManagerPacked = preload("res://scenes/GameManagerAPI.tscn")	
 	gameManagerUnpacked = gameManagerPacked.instantiate()
+	difficultyManager = difficultyManager.instantiate()
 	if $MenuBackSound.playing == false :
 		$MenuBackSound.play()
 	
@@ -30,7 +33,9 @@ func _on_StartButton_pressed():
 	get_node("DarkGreenElement").visible = false
 	get_node("BlacKElement").visible = false
 	get_node("PurpleElement").visible = false
-	add_child(gameManagerUnpacked)
+	add_child(difficultyManager)
+	#add_child(gameManagerUnpacked)
+	
 	if $GameBGM.playing == false:
 		$GameBGM.play()
 		$MenuBackSound.stop()
