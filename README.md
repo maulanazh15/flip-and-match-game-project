@@ -12,7 +12,7 @@ A memory game (finding pairs of cards)
 
 ![Screenshot Difficulty](https://github.com/maulanazh15/flip-and-match-game-project/blob/master/screenshots_for_readme_github/difficulty.png)
 
-![Screenshot Game](https://github.com/maulanazh15/flip-and-match-game-project/blob/master/screenshots_for_readme_github/gameplay)
+![Screenshot Game](https://github.com/maulanazh15/flip-and-match-game-project/blob/master/screenshots_for_readme_github/gameplay.png)
 
 
 # License
