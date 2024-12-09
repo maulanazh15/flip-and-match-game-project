@@ -1,15 +1,11 @@
-# Memory Game
+# Match Up
 
 
 A memory game (finding pairs of cards)
 
-- This is made using Godot Engine 4.1.1
+- This is made using Godot Engine 4.3.1
   
-- just minor changes done to the Godot Engine 3 version (https://github.com/Tzoop/MemoryGame)
-
 - The scripts are written in gdscript
-
-- ![Memory Game on itch.io](https://tzoop.itch.io/memory-game) <- Here this game (Godot 3 version) can be played and downloaded.
 
 ![Screenshot Menu](https://github.com/Tzoop/MemoryGame/blob/master/screenshots_for_readme_github/MemoryGameMenuScreenshot.png)
 
