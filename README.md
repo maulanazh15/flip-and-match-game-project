@@ -1,15 +1,18 @@
 # Match Up
 
-
 A memory game (finding pairs of cards)
 
 - This is made using Godot Engine 4.3.1
   
 - The scripts are written in gdscript
 
-![Screenshot Menu](https://github.com/Tzoop/MemoryGame/blob/master/screenshots_for_readme_github/MemoryGameMenuScreenshot.png)
+- Using Yu-Gi-Oh deck card API for fetching card picture (https://ygoprodeck.com/api-guide/)
 
-![Screenshot Game](https://github.com/Tzoop/MemoryGame/blob/master/screenshots_for_readme_github/MemoryGamePlayingScreenshot1.png)
+![Screenshot Menu](https://github.com/maulanazh15/flip-and-match-game-project/tree/master/screenshots_for_readme_github/main-menu.png)
+
+![Screenshot Difficulty](https://github.com/maulanazh15/flip-and-match-game-project/tree/master/screenshots_for_readme_github/difficulty.png)
+
+![Screenshot Game](https://github.com/maulanazh15/flip-and-match-game-project/tree/master/screenshots_for_readme_github/gameplay)
 
 
 # License
