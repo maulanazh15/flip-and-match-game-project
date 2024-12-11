@@ -1,6 +1,7 @@
 extends Node2D
 
 var http_request: HTTPRequest
+var high_score = Global.high_score
 var pokemon_sprites = []
 var api_url = "https://db.ygoprodeck.com/api/v7/cardinfo.php?&startdate=2000-01-01&enddate=2002-08-23&dateregion=tcg"
 var default_image
@@ -32,7 +33,6 @@ func _ready():
 	$LoadingScreen.visible = true
 	timer = $LevelTimer
 	timer.connect("timeout", Callable(self, "_on_timer_timeout"))
-	
 	default_image = preload("res://sprites/dandelion-flower.png")
 	http_request = HTTPRequest.new()
 	add_child(http_request)
@@ -42,7 +42,6 @@ func _ready():
 	fetch_card_data()
 	
 func _on_timer_timeout():
-	print("Time's up!")
 	end_level()  # Define logic for ending the level
 	
 func prepare_next_level():
@@ -241,7 +240,7 @@ func check_match(card1, card2):
 func _process(delta):
 	if card_spawned and not timer.is_paused():
 		time_left -= delta
-		$TimerLabel.text = "Time: " + str(round(time_left)) + " s"
+		$TimerLabel.text = "Time Left: " + str(round(time_left)) + " s"
 		$FlipRemaining.text = "Flip Remainings : " +str(flips_remaining)
 		if time_left <= 0:
 			_on_timer_timeout()
@@ -249,19 +248,24 @@ func _process(delta):
 	update_level_display()
 		
 func end_level():
-	print("Level Over! Final Score: ", score)# Implement logic for restarting, progressing to the next level, or showing a game-over screen
 	timer.stop()
-	Global.level = 1
-	Global.score = 0
-	Global.check_mathced = false
-	Global.total_cards = 0
-	Global.total_pairs = 0 
-	get_tree().reload_current_scene()
+	check_high_score()
+	#Global.save_game()
+	var gameOverScene = preload("res://game_over.tscn");
+	gameOverScene = gameOverScene.instantiate()
+	print("Level Over! Final Score: ", score)# Implement logic for restarting, progressing to the next level, or showing a game-over screen
+	get_node("res://game_over.tscn")
 
 func update_score_display():
 	$ScoreLabel.text = "Score: " + str(score)
 
+func check_high_score() :
+	if score >= high_score : 
+		high_score = score
+		Global.high_score = high_score
+
 func update_level_display() :
 	$NumberOfMatches.text = "Level : " + str(level)
+	
 func _on_BackToMenuButton_button_down():
 	end_level()

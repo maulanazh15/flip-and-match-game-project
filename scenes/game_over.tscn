@@ -1,0 +1,97 @@
+[gd_scene load_steps=6 format=3 uid="uid://riwy3eiuruov"]
+
+[ext_resource type="Script" path="res://scripts/game_over.gd" id="1_12wd3"]
+[ext_resource type="FontFile" uid="uid://cxuft2yrjm7pw" path="res://fonts/Symtext.ttf" id="1_snr8k"]
+[ext_resource type="Texture2D" uid="uid://h4je4bj5gaqj" path="res://sprites/BackgroundBlue.png" id="3_nqpp3"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ncqef"]
+bg_color = Color(0.196078, 0.196078, 0.196078, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w4lub"]
+bg_color = Color(0.101961, 0.101961, 0.101961, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="GameOver" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_12wd3")
+
+[node name="GameOver" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_left = 645.0
+offset_top = 271.0
+offset_right = 1258.0
+offset_bottom = 396.0
+pivot_offset = Vector2(291, 50)
+theme_override_fonts/normal_font = ExtResource("1_snr8k")
+theme_override_font_sizes/normal_font_size = 80
+bbcode_enabled = true
+text = "[center] Game Over"
+
+[node name="HighScore" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_left = 635.0
+offset_top = 519.0
+offset_right = 1248.0
+offset_bottom = 644.0
+pivot_offset = Vector2(291, 50)
+theme_override_fonts/normal_font = ExtResource("1_snr8k")
+theme_override_font_sizes/normal_font_size = 60
+bbcode_enabled = true
+text = "High Score :"
+
+[node name="Difficulty" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_left = 641.0
+offset_top = 407.0
+offset_right = 1254.0
+offset_bottom = 532.0
+pivot_offset = Vector2(291, 50)
+theme_override_fonts/normal_font = ExtResource("1_snr8k")
+theme_override_font_sizes/normal_font_size = 60
+bbcode_enabled = true
+text = "Difficulty : "
+
+[node name="Score" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_left = 641.0
+offset_top = 610.0
+offset_right = 1254.0
+offset_bottom = 735.0
+pivot_offset = Vector2(291, 50)
+theme_override_fonts/normal_font = ExtResource("1_snr8k")
+theme_override_font_sizes/normal_font_size = 60
+bbcode_enabled = true
+text = "Score :"
+
+[node name="BackToMenuButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 810.0
+offset_top = 736.0
+offset_right = 1091.0
+offset_bottom = 861.0
+theme_override_fonts/font = ExtResource("1_snr8k")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/hover = SubResource("StyleBoxFlat_ncqef")
+theme_override_styles/normal = SubResource("StyleBoxFlat_w4lub")
+text = "Back to Menu"
+
+[node name="Background" type="Sprite2D" parent="BackToMenuButton"]
+z_index = -1
+position = Vector2(-809, -735)
+scale = Vector2(60, 33.75)
+texture = ExtResource("3_nqpp3")
+centered = false
+
+[connection signal="pressed" from="BackToMenuButton" to="." method="_on_back_to_menu_button_pressed"]

@@ -99,16 +99,18 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_qi1r8")
 text = "Start"
 
 [node name="Credits" type="RichTextLabel" parent="."]
-offset_left = 659.0
-offset_top = 862.0
-offset_right = 1323.0
-offset_bottom = 1022.0
+offset_left = 626.0
+offset_top = 881.0
+offset_right = 1290.0
+offset_bottom = 1041.0
 theme_override_fonts/normal_font = ExtResource("3")
 theme_override_font_sizes/normal_font_size = 30
-text = "Pay attention to the card designs; even small details can help you remember!"
+bbcode_enabled = true
+text = "[center]Pay attention to the card designs; even small details can help you remember!"
 scroll_active = false
 
 [node name="ClickColors" type="RichTextLabel" parent="."]
+visible = false
 offset_left = 200.0
 offset_top = 600.0
 offset_right = 560.0
@@ -119,6 +121,7 @@ text = "click color blocks to change the background color"
 scroll_active = false
 
 [node name="GrayElement" type="Area2D" parent="."]
+visible = false
 position = Vector2(240, 460)
 gravity = 98.0
 script = ExtResource("4")
@@ -132,6 +135,7 @@ scale = Vector2(2, 2)
 texture = ExtResource("5")
 
 [node name="RedElement" type="Area2D" parent="."]
+visible = false
 position = Vector2(240, 540)
 gravity = 98.0
 script = ExtResource("4")
@@ -145,6 +149,7 @@ scale = Vector2(2, 2)
 texture = ExtResource("6")
 
 [node name="PinkElement" type="Area2D" parent="."]
+visible = false
 position = Vector2(320, 540)
 gravity = 98.0
 script = ExtResource("4")
@@ -158,6 +163,7 @@ scale = Vector2(2, 2)
 texture = ExtResource("7")
 
 [node name="BlueElement" type="Area2D" parent="."]
+visible = false
 position = Vector2(400, 540)
 gravity = 98.0
 script = ExtResource("4")
@@ -171,6 +177,7 @@ scale = Vector2(2, 2)
 texture = ExtResource("2")
 
 [node name="OrangeElement" type="Area2D" parent="."]
+visible = false
 position = Vector2(480, 540)
 gravity = 98.0
 script = ExtResource("4")
@@ -184,6 +191,7 @@ scale = Vector2(2, 2)
 texture = ExtResource("8")
 
 [node name="DarkGreenElement" type="Area2D" parent="."]
+visible = false
 position = Vector2(400, 460)
 gravity = 98.0
 script = ExtResource("4")
@@ -197,6 +205,7 @@ scale = Vector2(2, 2)
 texture = ExtResource("9")
 
 [node name="BlacKElement" type="Area2D" parent="."]
+visible = false
 position = Vector2(320, 460)
 gravity = 98.0
 script = ExtResource("4")
@@ -210,6 +219,7 @@ scale = Vector2(2, 2)
 texture = ExtResource("10")
 
 [node name="PurpleElement" type="Area2D" parent="."]
+visible = false
 position = Vector2(480, 460)
 gravity = 98.0
 script = ExtResource("4")

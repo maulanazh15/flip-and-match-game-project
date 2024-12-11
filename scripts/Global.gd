@@ -33,21 +33,41 @@ var total_cards = 0
 var check_mathced = false
 var max_grid_col = 6
 var max_grid_row = 3
+var high_score = 0
 
 func save_game():
-	var save_data = { "level": level, "score" : score }
+	var save_data = { 
+		"high_scores": {
+			"easy": high_score if difficulty == "easy" else get_high_score("easy"),
+			"normal": high_score if difficulty == "normal" else get_high_score("normal"),
+			"hard": high_score if difficulty == "hard" else get_high_score("hard"),
+		},
+	}
 	var file = FileAccess.open("user://save_game.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify(save_data))
 	file.close()
-	
+
 func load_game():
 	if FileAccess.file_exists("user://save_game.json"):
 		var file = FileAccess.open("user://save_game.json", FileAccess.READ)
-		var json = JSON.new()  # Create a JSON instance
+		var json = JSON.new()
 		var save_data = json.parse(file.get_as_text())
 		file.close()
 		
 		if save_data.error == OK:  # Check if parsing was successful
-			level = save_data.result["level"]  # Use `result` to access the parsed data
-			score = save_data.result["score"]  # Use `result` to access the parsed data
-			
+			var high_scores = save_data.result["high_scores"]
+			high_score = high_scores[difficulty]  # Load high score for the current difficulty
+		else:
+			print("Failed to parse saved game data.")
+
+# Helper function to get high scores for specific difficulty
+func get_high_score(diff):
+	if FileAccess.file_exists("user://save_game.json"):
+		var file = FileAccess.open("user://save_game.json", FileAccess.READ)
+		var json = JSON.new()
+		var save_data = json.parse(file.get_as_text())
+		file.close()
+		
+		if save_data.error == 0:
+			return save_data.result["high_scores"].get(diff, 0)  # Return the high score for the specified difficulty or 0
+	return 0

@@ -6,11 +6,8 @@ var gameManagerUnpacked
 
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-
 func start_game() -> void: 
+	#Global.load_game()
 	gameManagerPacked = preload("res://scenes/GameManagerAPI.tscn")	
 	gameManagerUnpacked = gameManagerPacked.instantiate()
 	$EasyBtn.visible = false
