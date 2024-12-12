@@ -25,7 +25,7 @@ func _ready():
 	card_name = \"Empty\"
 	card_face = preload(\"res://sprites/dandelion-flower.png\")
 	card_back = preload(\"res://sprites/dandelion-flower.png\")
-	flipsound = $CardFlipSound
+	#flipsound = $CardFlipSound
 	get_node(\"Sprite\").texture = card_back
 	pass
 
