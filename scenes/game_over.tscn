@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://riwy3eiuruov"]
+[gd_scene load_steps=7 format=3 uid="uid://riwy3eiuruov"]
 
 [ext_resource type="Script" path="res://scripts/game_over.gd" id="1_12wd3"]
 [ext_resource type="FontFile" uid="uid://cxuft2yrjm7pw" path="res://fonts/Symtext.ttf" id="1_snr8k"]
 [ext_resource type="Texture2D" uid="uid://h4je4bj5gaqj" path="res://sprites/BackgroundBlue.png" id="3_nqpp3"]
+[ext_resource type="AudioStream" uid="uid://b5iwk3711u2ib" path="res://music/Yugioh_GX-_Judai_s_Theme.mp3" id="4_pelas"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ncqef"]
 bg_color = Color(0.196078, 0.196078, 0.196078, 1)
@@ -55,7 +56,7 @@ text = "High Score :"
 layout_mode = 0
 offset_left = 641.0
 offset_top = 407.0
-offset_right = 1254.0
+offset_right = 1668.0
 offset_bottom = 532.0
 pivot_offset = Vector2(291, 50)
 theme_override_fonts/normal_font = ExtResource("1_snr8k")
@@ -67,7 +68,7 @@ text = "Difficulty : "
 layout_mode = 0
 offset_left = 641.0
 offset_top = 610.0
-offset_right = 1254.0
+offset_right = 1420.0
 offset_bottom = 735.0
 pivot_offset = Vector2(291, 50)
 theme_override_fonts/normal_font = ExtResource("1_snr8k")
@@ -93,5 +94,10 @@ position = Vector2(-809, -735)
 scale = Vector2(60, 33.75)
 texture = ExtResource("3_nqpp3")
 centered = false
+
+[node name="MenuBackSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_pelas")
+volume_db = 9.905
+parameters/looping = true
 
 [connection signal="pressed" from="BackToMenuButton" to="." method="_on_back_to_menu_button_pressed"]

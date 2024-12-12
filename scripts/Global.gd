@@ -51,12 +51,13 @@ func load_game():
 	if FileAccess.file_exists("user://save_game.json"):
 		var file = FileAccess.open("user://save_game.json", FileAccess.READ)
 		var json = JSON.new()
-		var save_data = json.parse(file.get_as_text())
+		var parse_result = json.parse(file.get_as_text())
 		file.close()
 		
-		if save_data.error == OK:  # Check if parsing was successful
-			var high_scores = save_data.result["high_scores"]
-			high_score = high_scores[difficulty]  # Load high score for the current difficulty
+		if parse_result == OK:  # Check if parsing was successful
+			var save_data = json.data  # Access parsed data
+			var high_scores = save_data["high_scores"]
+			high_score = high_scores.get(difficulty, 0)  # Load high score for the current difficulty
 		else:
 			print("Failed to parse saved game data.")
 
@@ -65,9 +66,10 @@ func get_high_score(diff):
 	if FileAccess.file_exists("user://save_game.json"):
 		var file = FileAccess.open("user://save_game.json", FileAccess.READ)
 		var json = JSON.new()
-		var save_data = json.parse(file.get_as_text())
+		var parse_result = json.parse(file.get_as_text())
 		file.close()
 		
-		if save_data.error == 0:
-			return save_data.result["high_scores"].get(diff, 0)  # Return the high score for the specified difficulty or 0
+		if parse_result == OK:
+			var save_data = json.data  # Access parsed data
+			return save_data["high_scores"].get(diff, 0)  # Return the high score for the specified difficulty or 0
 	return 0

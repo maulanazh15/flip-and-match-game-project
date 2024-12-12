@@ -147,6 +147,15 @@ theme_override_fonts/normal_font = ExtResource("4_1yfgl")
 theme_override_font_sizes/normal_font_size = 28
 text = "Score : 0"
 
+[node name="HigScoreLabel" type="RichTextLabel" parent="."]
+offset_left = -32.0
+offset_top = 511.0
+offset_right = 568.0
+offset_bottom = 571.0
+theme_override_fonts/normal_font = ExtResource("4_1yfgl")
+theme_override_font_sizes/normal_font_size = 28
+text = "High Score : 0"
+
 [node name="TimerLabel" type="RichTextLabel" parent="."]
 offset_left = -36.0
 offset_top = 635.0

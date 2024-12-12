@@ -31,6 +31,7 @@ var card_spawned = false
 
 func _ready():
 	$LoadingScreen.visible = true
+	$HigScoreLabel.text = "High Score : " + str(high_score)
 	timer = $LevelTimer
 	timer.connect("timeout", Callable(self, "_on_timer_timeout"))
 	default_image = preload("res://sprites/dandelion-flower.png")
@@ -212,6 +213,7 @@ func _on_card_flipped(card):
 				matched_card.queue_free()  # Remove matched cards
 			unmatched_cards -= 2
 			flips_remaining += bonus_flip
+			time_left += bonus_time
 		else:
 			$CheckBox.text = "!="
 			# Flip back if not a match after a small delay
@@ -244,22 +246,24 @@ func _process(delta):
 		$FlipRemaining.text = "Flip Remainings : " +str(flips_remaining)
 		if time_left <= 0:
 			_on_timer_timeout()
+			
 	update_score_display()
 	update_level_display()
 		
 func end_level():
 	timer.stop()
 	check_high_score()
-	#Global.save_game()
-	var gameOverScene = preload("res://game_over.tscn");
+	Global.save_game()
+	var gameOverScene = preload("res://game_over.tscn")
 	gameOverScene = gameOverScene.instantiate()
 	print("Level Over! Final Score: ", score)# Implement logic for restarting, progressing to the next level, or showing a game-over screen
-	get_node("res://game_over.tscn")
+	get_tree().change_scene_to_file("res://scenes/game_over.tscn")
 
 func update_score_display():
 	$ScoreLabel.text = "Score: " + str(score)
 
 func check_high_score() :
+	Global.score = score
 	if score >= high_score : 
 		high_score = score
 		Global.high_score = high_score

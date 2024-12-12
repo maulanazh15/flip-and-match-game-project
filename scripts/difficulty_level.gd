@@ -4,10 +4,10 @@ var gameManagerPacked
 var gameManagerUnpacked
 
 
-
-
 func start_game() -> void: 
-	#Global.load_game()
+	if $ClickStartSound.playing == false :
+		$ClickStartSound.play()
+	Global.load_game()
 	gameManagerPacked = preload("res://scenes/GameManagerAPI.tscn")	
 	gameManagerUnpacked = gameManagerPacked.instantiate()
 	$EasyBtn.visible = false

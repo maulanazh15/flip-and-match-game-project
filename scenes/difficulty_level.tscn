@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://b1tlsg6a6v2cr"]
+[gd_scene load_steps=6 format=3 uid="uid://b1tlsg6a6v2cr"]
 
 [ext_resource type="FontFile" uid="uid://cxuft2yrjm7pw" path="res://fonts/Symtext.ttf" id="1_7hurq"]
 [ext_resource type="Script" path="res://scripts/difficulty_level.gd" id="1_aqo2d"]
+[ext_resource type="AudioStream" uid="uid://7edblmr75p72" path="res://music/StartLevel.MP3" id="3_ipsjr"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_adwiw"]
 bg_color = Color(0.196078, 0.196078, 0.196078, 1)
@@ -74,6 +75,10 @@ theme_override_font_sizes/font_size = 140
 theme_override_styles/hover = SubResource("StyleBoxFlat_adwiw")
 theme_override_styles/normal = SubResource("StyleBoxFlat_6jqkl")
 text = "HARD"
+
+[node name="ClickStartSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_ipsjr")
+volume_db = 9.905
 
 [connection signal="pressed" from="EasyBtn" to="." method="_on_easy_btn_pressed"]
 [connection signal="pressed" from="BackBtn" to="." method="_on_back_btn_pressed"]
